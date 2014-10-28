@@ -4,8 +4,8 @@
     <string name="app_name">FallDetection</string>
     <string name="on">Start</string>
     <string name="txt1">合成値</string>
-    <string name="txt2">気圧</string>
-    <string name="txt3">傾</string>
+    <string name="txt2">気圧値</string>
+    <string name="txt3">傾き血</string>
     <string name="action_settings">Settings</string>
 
 </resources>
