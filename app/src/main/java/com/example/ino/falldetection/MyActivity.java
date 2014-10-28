@@ -12,15 +12,17 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI;
-    private TextView text1, text2,text3;
+    private TextView text1, text2,text3,text12;
     private boolean doesRun;
     double cmp, v, q;
     String result,str, b, vv;
+    ArrayList<Double> cmpbox = new ArrayList<Double>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MyActivity extends Activity implements SensorEventListener {
         text1 = (TextView)this.findViewById(R.id.txt1);
         text2 = (TextView)this.findViewById(R.id.txt2);
         text3 = (TextView)this.findViewById(R.id.txt3);
+        text12 = (TextView)this.findViewById(R.id.txt12);
     }
 
 
@@ -92,6 +95,19 @@ public class MyActivity extends Activity implements SensorEventListener {
         v = ba.setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();
         str = Double.toString(v);
         text1.setText("m/s＾2 : " + str);
+        cmpbox.add(cmp);
+            if (cmpbox.size() == 15){
+                double c0 = cmpbox.get(0);double c1 = cmpbox.get(1);double c2 = cmpbox.get(2);
+                double c3 = cmpbox.get(3);double c4 = cmpbox.get(4);double c5 = cmpbox.get(5);
+                double c6 = cmpbox.get(6);double c7 = cmpbox.get(7);double c8 = cmpbox.get(8);
+                double c9 = cmpbox.get(9);double c10 = cmpbox.get(10);double c11 = cmpbox.get(11);
+                double c12 = cmpbox.get(12);double c13 = cmpbox.get(13);double c14 = cmpbox.get(14);
+                if(c0<11 && c1<11 && c2<11 && c3<11 && c4<11 && c5<11 && c6<11 && c7<11 && c8<11 && c9<11 && c10<11 && c11<11 && c12<11 && c13<11 && c14<11 && 9<c0 && 9<c1 && 9<c2 && 9<c3 && 9<c4 && 9<c5 && 9<c6 && 9<c7 && 9<c8 && 9<c9 && 9<c10 && 9<c11 && 9<c12 && 9<c13 && 9<c14){
+                    text12.setText("○");
+                }else{
+                    text12.setText("×");
+                }
+            }
     }else if (event.sensor.getType() == Sensor.TYPE_PRESSURE){
         double ph = event.values[0];
         BigDecimal bi = new BigDecimal(ph);
