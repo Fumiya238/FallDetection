@@ -103,9 +103,9 @@ public class MyActivity extends Activity implements SensorEventListener {
                 double c9 = cmpbox.get(9);double c10 = cmpbox.get(10);double c11 = cmpbox.get(11);
                 double c12 = cmpbox.get(12);double c13 = cmpbox.get(13);double c14 = cmpbox.get(14);
                 if(c0<11 && c1<11 && c2<11 && c3<11 && c4<11 && c5<11 && c6<11 && c7<11 && c8<11 && c9<11 && c10<11 && c11<11 && c12<11 && c13<11 && c14<11 && 9<c0 && 9<c1 && 9<c2 && 9<c3 && 9<c4 && 9<c5 && 9<c6 && 9<c7 && 9<c8 && 9<c9 && 9<c10 && 9<c11 && 9<c12 && 9<c13 && 9<c14){
-                    text12.setText("○");
+                    text12.setText("停止");
                 }else{
-                    text12.setText("×");
+                    text12.setText("歩行");
                 }
             }
     }else if (event.sensor.getType() == Sensor.TYPE_PRESSURE){
