@@ -21,7 +21,7 @@ public class MyActivity extends Activity implements SensorEventListener {
     private TextView text1, text2,text3,text12;
     private boolean doesRun;
     double cmp, v, q;
-    String result,str, b, vv;
+    String result,str, h, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
 
     @Override
