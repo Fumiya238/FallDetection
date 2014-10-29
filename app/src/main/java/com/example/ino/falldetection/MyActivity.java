@@ -6,33 +6,40 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI;
-    private TextView text1, text2,text3,text12;
+    private TextView text1, text2,text3,text12,text13;
+    private Button btn;
     private boolean doesRun;
     double cmp, v, q;
     String result,str, h, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
+    ArrayList<Double> phabox = new ArrayList<Double>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         doesRun = false;
+        btn = (Button)this.findViewById(R.id.button);
         text1 = (TextView)this.findViewById(R.id.txt1);
         text2 = (TextView)this.findViewById(R.id.txt2);
         text3 = (TextView)this.findViewById(R.id.txt3);
         text12 = (TextView)this.findViewById(R.id.txt12);
+        text13 = (TextView)this.findViewById(R.id.txt13);
     }
 
 
@@ -58,6 +65,7 @@ public class MyActivity extends Activity implements SensorEventListener {
     public void doAction(View view){
         if(!doesRun){
             doesRun = true;
+            btn.setText("OFF");
             managerACC = (SensorManager)this.getSystemService(SENSOR_SERVICE);
             List<Sensor> sensorsacc = managerACC.getSensorList(Sensor.TYPE_ACCELEROMETER);
             if(sensorsacc.size() > 0){
@@ -68,7 +76,7 @@ public class MyActivity extends Activity implements SensorEventListener {
             List<Sensor> sensorspre = managerPRE.getSensorList(Sensor.TYPE_PRESSURE);
             if(sensorspre.size() > 0){
                 Sensor sensor = sensorspre.get(0);
-                managerPRE.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+                managerPRE.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
             }
             managerORI = (SensorManager)this.getSystemService(SENSOR_SERVICE);
             List<Sensor> sensorsori = managerORI.getSensorList(Sensor.TYPE_ORIENTATION);
@@ -78,6 +86,7 @@ public class MyActivity extends Activity implements SensorEventListener {
             }
         }else{
             doesRun = false;
+            btn.setText("ON");
             managerACC.unregisterListener(this);
             managerPRE.unregisterListener(this);
             managerORI.unregisterListener(this);
@@ -87,14 +96,11 @@ public class MyActivity extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
     if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
-//        result  = "Gx:" +String.valueOf(event.values[0]) + "\n";
-//        result += "Gy:" +String.valueOf(event.values[1]) + "\n";
-//        result += "Gz:" +String.valueOf(event.values[2]);
         cmp = Math.sqrt((Math.pow((event.values[0]), 2) + Math.pow(event.values[1], 2) + Math.pow(event.values[2], 2)));
         BigDecimal ba = new BigDecimal(cmp);
         v = ba.setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();
         str = Double.toString(v);
-        text1.setText("m/s＾2 : " + str);
+        text1.setText("加速度 : " + str);
         cmpbox.add(cmp);
             if (cmpbox.size() == 15){
                 double c0 = cmpbox.get(0);double c1 = cmpbox.get(1);double c2 = cmpbox.get(2);
@@ -106,18 +112,50 @@ public class MyActivity extends Activity implements SensorEventListener {
                     text12.setText("停止");
                 }else{
                     text12.setText("歩行");
-                }
+                }cmpbox.clear();
             }
     }else if (event.sensor.getType() == Sensor.TYPE_PRESSURE){
         double ph = event.values[0];
         BigDecimal bi = new BigDecimal(ph);
         q = bi.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
         vv = Double.toString(q);
-        text2.setText("hPa : " + vv);
+        text2.setText("気圧値 : " + vv);
+        phabox.add(q);
+        if (phabox.size() == 100){
+            int i;
+            double ave1,ave2, ppp1=0, ppp2=0;
+            Iterator<Double> iter = phabox.iterator();
+                for (i=0;i<50;i++){
+                    ppp1 = ppp1 + phabox.get(i);
+                }
+            ave1 = ppp1/50;
+            BigDecimal eA = new BigDecimal(ave1);
+            double A = eA.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+
+            for (i=50;i<100;i++){
+                ppp2 = ppp2 + phabox.get(i);
+            }
+            ave2 = ppp2/50;
+            BigDecimal eB = new BigDecimal(ave2);
+            double B = eB.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+            if (ave2 - ave1 > 0.03){
+
+            }for (i=0;i<50; i++){
+                iter.next();
+                iter.remove();
+            }
+            double g = B - A;
+            BigDecimal eC = new BigDecimal(g);
+            double Q = eC.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+            text13.setText(""+ Q);
+        }
+
+
+
     }else if (event.sensor.getType() == Sensor.TYPE_ORIENTATION){
-        result = "方位角:" + String.valueOf(event.values[0]) + "\n";
-        result += "傾斜角:" + String.valueOf(event.values[1]) + "\n";
-        result += "回転角:" + String.valueOf(event.values[2]) + "\n";
+        result = "方位角 :" + String.valueOf(event.values[0]) + "\n";
+        result += "傾斜角 :" + String.valueOf(event.values[1]) + "\n";
+        result += "回転角 :" + String.valueOf(event.values[2]) + "\n";
         text3.setText(result);
     }
     }

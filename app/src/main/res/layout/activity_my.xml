@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,49 +16,43 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txt12"
-        android:text="@string/txt12"
-        android:layout_toRightOf="@id/txt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
         android:id="@+id/txt2"
         android:text="@string/txt2"
-        android:layout_below="@id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/txt13"
-        android:text="@string/txt12"
-        android:layout_toRightOf="@id/txt2"
-        android:layout_below="@id/txt12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/txt3"
         android:text="@string/txt3"
-        android:layout_below="@id/txt2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/txt14"
-        android:text="@string/txt12"
-        android:layout_toRightOf="@id/txt3"
-        android:layout_below="@id/txt13"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/button"
-        android:layout_below="@id/txt3"
         android:layout_width="wrap_content"
         android:layout_height="33dp"
         android:onClick="doAction"
         android:text="@string/on"
         android:textSize="12sp"/>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/txt12"
+        android:text="@string/txt12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txt13"
+        android:text="@string/txt12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txt14"
+        android:text="@string/txt12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
