@@ -21,25 +21,31 @@ import java.util.List;
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI;
-    private TextView text1, text2,text3,text12,text13;
+    private TextView text1, text2,text3,text12,text13,text14,text15;
     private Button btn;
-    private boolean doesRun;
+    private boolean doesRun,jud1,jud2,jud3;
     double cmp, v, q;
     String result,str, h, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
+    ArrayList<Double> oribox = new ArrayList<Double>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         doesRun = false;
+        jud1 = false;
+        jud2 = false;
+        jud3 = false;
         btn = (Button)this.findViewById(R.id.button);
         text1 = (TextView)this.findViewById(R.id.txt1);
         text2 = (TextView)this.findViewById(R.id.txt2);
         text3 = (TextView)this.findViewById(R.id.txt3);
         text12 = (TextView)this.findViewById(R.id.txt12);
         text13 = (TextView)this.findViewById(R.id.txt13);
+        text14 = (TextView)this.findViewById(R.id.txt13);
+        text15 = (TextView)this.findViewById(R.id.txt13);
     }
 
 
@@ -110,8 +116,10 @@ public class MyActivity extends Activity implements SensorEventListener {
                 double c12 = cmpbox.get(12);double c13 = cmpbox.get(13);double c14 = cmpbox.get(14);
                 if(c0<11 && c1<11 && c2<11 && c3<11 && c4<11 && c5<11 && c6<11 && c7<11 && c8<11 && c9<11 && c10<11 && c11<11 && c12<11 && c13<11 && c14<11 && 9<c0 && 9<c1 && 9<c2 && 9<c3 && 9<c4 && 9<c5 && 9<c6 && 9<c7 && 9<c8 && 9<c9 && 9<c10 && 9<c11 && 9<c12 && 9<c13 && 9<c14){
                     text12.setText("停止");
+                    jud1 = true;
                 }else{
                     text12.setText("歩行");
+                    jud2 = false;
                 }cmpbox.clear();
             }
     }else if (event.sensor.getType() == Sensor.TYPE_PRESSURE){
@@ -139,8 +147,11 @@ public class MyActivity extends Activity implements SensorEventListener {
             BigDecimal eB = new BigDecimal(ave2);
             double B = eB.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
             if (ave2 - ave1 > 0.03){
-
-            }for (i=0;i<50; i++){
+                jud2 = true;
+            }else {
+                jud2 = false;
+            }
+            for (i=0;i<50; i++){
                 iter.next();
                 iter.remove();
             }
