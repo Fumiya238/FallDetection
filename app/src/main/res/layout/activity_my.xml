@@ -38,20 +38,26 @@
         android:textSize="12sp"/>
 
     <TextView
-        android:id="@+id/txt12"
+        android:id="@+id/txt4"
         android:text="@string/txt12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txt13"
+        android:id="@+id/txt5"
         android:text="@string/txt12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txt14"
+        android:id="@+id/txt6"
         android:text="@string/txt12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txt7"
+        android:text="@string/txt13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

@@ -6,7 +6,8 @@
     <string name="txt1">合成値 :</string>
     <string name="txt2">気圧値 :</string>
     <string name="txt3">方位角 :\n傾斜角 :\n回転角 :</string>
-    <string name="txt12">うんち </string>
+    <string name="txt12">判定 </string>
+    <string name="txt13">転倒判定 </string>
     <string name="action_settings">Settings</string>
 
 </resources>
