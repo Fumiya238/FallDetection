@@ -43,11 +43,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/txt5"
         android:text="@string/txt12"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/txt8"
+        android:text="@string/txt14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+</LinearLayout>
+
 
     <TextView
         android:id="@+id/txt6"

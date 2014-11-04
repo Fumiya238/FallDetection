@@ -1,10 +1,14 @@
 package com.example.ino.falldetection;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,14 +25,17 @@ import java.util.List;
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI;
-    private TextView text1, text2,text3,text4,text5,text6,text7;
+    private TextView text1, text2,text3,text4,text5,text6,text7,text8;
     private Button btn;
-    private boolean doesRun,jud1,jud2,jud3;
+    private boolean doesRun,jud1,jud2,jud3,builder;
     double cmp, v, q;
-    String result,str, h, vv;
+    String result,str, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
-    ArrayList<Double> oribox = new ArrayList<Double>();
+    ArrayList<Double> phabox2 = new ArrayList<Double>();
+//    private SoundPool mSeplayer;
+//    private  int[] mSound = new int[2];
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,12 @@ public class MyActivity extends Activity implements SensorEventListener {
         text5 = (TextView)this.findViewById(R.id.txt5);
         text6 = (TextView)this.findViewById(R.id.txt6);
         text7 = (TextView)this.findViewById(R.id.txt7);
+        text8 = (TextView)this.findViewById(R.id.txt8);
+//        mSeplayer = new SoundPool(2, AudioManager.STREAM_MUSIC,0);
+//        mSound[0] = mSeplayer.load(getApplicationContext(),R.raw.mdai,1);
+        mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
+
+
     }
 
 
@@ -133,40 +146,59 @@ public class MyActivity extends Activity implements SensorEventListener {
             int i;
             double ave1,ave2, ppp1=0, ppp2=0;
             Iterator<Double> iter = phabox.iterator();
-                for (i=0;i<50;i++){
+                for (i=0;i<100;i++){
                     ppp1 = ppp1 + phabox.get(i);
                 }
-            ave1 = ppp1/50;
-            BigDecimal eA = new BigDecimal(ave1);
-            double A = eA.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+            ave1 = ppp1/100;
 
-            for (i=50;i<100;i++){
-                ppp2 = ppp2 + phabox.get(i);
-            }
-            ave2 = ppp2/50;
-            BigDecimal eB = new BigDecimal(ave2);
-            double B = eB.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
-            if (ave2 - ave1 > 0.03){
+            BigDecimal eA = new BigDecimal(ave1);
+            double A = eA.setScale(3,BigDecimal.ROUND_DOWN).doubleValue();
+            text8.setText(""+A);
+//            Log.v("A", "" + A);
+            phabox2.add(A);
+            double p0 = phabox2.get(0);
+            if (A - p0 >0.05){
+                text5.setText("落下");
                 jud2 = true;
-            }else {
+                phabox2.clear();
+            }if (p0 - A > 0.05){
+                text5.setText("上昇");
                 jud2 = false;
+                phabox2.clear();
+            }else if (phabox2.size() == 15) {
+                text5.setText("落ちてない");
+                jud3 = false;
             }
-            for (i=0;i<50; i++){
+            for (i=0;i<1; i++){
                 iter.next();
                 iter.remove();
             }
-            double g = B - A;
-            BigDecimal eC = new BigDecimal(g);
-            double Q = eC.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
-            text5.setText(""+ Q);
+//            for (i=50;i<100;i++){
+//                ppp2 = ppp2 + phabox.get(i);
+//            }
+//            ave2 = ppp2/50;
+//            BigDecimal eB = new BigDecimal(ave2);
+//            double B = eB.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+//            if (ave2 - ave1 > 0.03){
+//                jud2 = true;
+//            }else {
+//                jud2 = false;
+//            }
+//            for (i=0;i<50; i++){
+//                iter.next();
+//                iter.remove();
+//            }
+//            double g = B - A;
+//            BigDecimal eC = new BigDecimal(g);
+//            double Q = eC.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
+//            text5.setText(""+ A);
         }
 
 
 
     }else if (event.sensor.getType() == Sensor.TYPE_ORIENTATION){
-        result = "方位角 :" + String.valueOf(event.values[0]) + "\n";
-        result += "傾斜角 :" + String.valueOf(event.values[1]) + "\n";
-        result += "回転角 :" + String.valueOf(event.values[2]) + "\n";
+        result = "Pitch :" + String.valueOf(event.values[1]) + "\n";
+        result += "Roll  :" + String.valueOf(event.values[2]) + "\n";
         text3.setText(result);
              if ((-120 < event.values[1] && event.values[1] < -50) || (50< event.values[1] && event.values[1] < 120)){
                 text6.setText("直立");
@@ -178,8 +210,17 @@ public class MyActivity extends Activity implements SensorEventListener {
     }
         if (jud1 == true && jud2 == true && jud3 ==true){
             text7.setText("転倒しました");
+//            mSeplayer.play(mSound[0],1.0f,1,0,0,1);
+            mp.start();
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+            builder1.setMessage("転倒しました");
+            builder1.show();
+            jud1 = false;
+            jud2 = false;
+            jud3 = false;
         }else{
             text7.setText("No転倒");
+
         }
     }
 
