@@ -24,10 +24,10 @@ import java.util.List;
 
 
 public class MyActivity extends Activity implements SensorEventListener {
-    private SensorManager managerACC, managerPRE, managerORI;
-    private TextView text1, text2,text3,text4,text5,text6,text7,text8;
+    private SensorManager managerACC, managerPRE, managerORI,managerSTE;
+    private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9;
     private Button btn;
-    private boolean doesRun,jud1,jud2,jud3,builder;
+    private boolean doesRun,jud1,jud2,jud3;
     double cmp, v, q;
     String result,str, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
@@ -54,6 +54,7 @@ public class MyActivity extends Activity implements SensorEventListener {
         text6 = (TextView)this.findViewById(R.id.txt6);
         text7 = (TextView)this.findViewById(R.id.txt7);
         text8 = (TextView)this.findViewById(R.id.txt8);
+        text9 = (TextView)this.findViewById(R.id.txt9);
 //        mSeplayer = new SoundPool(2, AudioManager.STREAM_MUSIC,0);
 //        mSound[0] = mSeplayer.load(getApplicationContext(),R.raw.mdai,1);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
@@ -102,6 +103,12 @@ public class MyActivity extends Activity implements SensorEventListener {
             if(sensorsori.size() > 0){
                 Sensor sensor = sensorsori.get(0);
                 managerORI.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+            }
+            managerSTE = (SensorManager)this.getSystemService(SENSOR_SERVICE);
+            List<Sensor> sensorsste = managerSTE.getSensorList(Sensor.TYPE_STEP_COUNTER);
+            if(sensorsste.size() > 0){
+                Sensor sensor = sensorsste.get(0);
+                managerSTE.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             }
         }else{
             doesRun = false;
@@ -207,6 +214,9 @@ public class MyActivity extends Activity implements SensorEventListener {
                  text6.setText("寝");
                  jud3 = true;
              }
+    }else if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){
+        result = "歩数" + String.valueOf(event.values[0]);
+        text9.setText(result);
     }
         if (jud1 == true && jud2 == true && jud3 ==true){
             text7.setText("転倒しました");

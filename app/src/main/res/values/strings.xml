@@ -9,6 +9,7 @@
     <string name="txt12">判定 </string>
     <string name="txt13">転倒判定 </string>
     <string name="txt14">気圧値 </string>
+    <string name="txt9">歩数</string>
     <string name="action_settings">Settings</string>
 
 </resources>
