@@ -6,9 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +23,7 @@ import java.util.List;
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI,managerSTE;
-    private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9;
+    private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9,text10;
     private Button btn;
     private boolean doesRun,jud1,jud2,jud3;
     double cmp, v, q;
@@ -33,8 +31,6 @@ public class MyActivity extends Activity implements SensorEventListener {
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
     ArrayList<Double> phabox2 = new ArrayList<Double>();
-//    private SoundPool mSeplayer;
-//    private  int[] mSound = new int[2];
     MediaPlayer mp;
 
     @Override
@@ -55,11 +51,8 @@ public class MyActivity extends Activity implements SensorEventListener {
         text7 = (TextView)this.findViewById(R.id.txt7);
         text8 = (TextView)this.findViewById(R.id.txt8);
         text9 = (TextView)this.findViewById(R.id.txt9);
-//        mSeplayer = new SoundPool(2, AudioManager.STREAM_MUSIC,0);
-//        mSound[0] = mSeplayer.load(getApplicationContext(),R.raw.mdai,1);
+        text10 = (TextView)this.findViewById(R.id.txt10);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
-
-
     }
 
 
@@ -180,29 +173,7 @@ public class MyActivity extends Activity implements SensorEventListener {
                 iter.next();
                 iter.remove();
             }
-//            for (i=50;i<100;i++){
-//                ppp2 = ppp2 + phabox.get(i);
-//            }
-//            ave2 = ppp2/50;
-//            BigDecimal eB = new BigDecimal(ave2);
-//            double B = eB.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
-//            if (ave2 - ave1 > 0.03){
-//                jud2 = true;
-//            }else {
-//                jud2 = false;
-//            }
-//            for (i=0;i<50; i++){
-//                iter.next();
-//                iter.remove();
-//            }
-//            double g = B - A;
-//            BigDecimal eC = new BigDecimal(g);
-//            double Q = eC.setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue();
-//            text5.setText(""+ A);
         }
-
-
-
     }else if (event.sensor.getType() == Sensor.TYPE_ORIENTATION){
         result = "Pitch :" + String.valueOf(event.values[1]) + "\n";
         result += "Roll  :" + String.valueOf(event.values[2]) + "\n";
@@ -215,12 +186,16 @@ public class MyActivity extends Activity implements SensorEventListener {
                  jud3 = true;
              }
     }else if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){
+        double k,kkk ;
         result = "歩数" + String.valueOf(event.values[0]);
         text9.setText(result);
+        k = event.values[0] * 0.033;
+        BigDecimal ek = new BigDecimal(k);
+        kkk = ek.setScale(4,BigDecimal.ROUND_DOWN).doubleValue();
+        text10.setText(String.valueOf(kkk)+" kcal");
     }
         if (jud1 == true && jud2 == true && jud3 ==true){
             text7.setText("転倒しました");
-//            mSeplayer.play(mSound[0],1.0f,1,0,0,1);
             mp.start();
             AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
             builder1.setMessage("転倒しました");
@@ -230,7 +205,6 @@ public class MyActivity extends Activity implements SensorEventListener {
             jud3 = false;
         }else{
             text7.setText("No転倒");
-
         }
     }
 

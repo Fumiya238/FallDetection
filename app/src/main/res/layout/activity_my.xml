@@ -21,13 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-
     <TextView
         android:id="@+id/txt3"
         android:text="@string/txt3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
 
     <Button
         android:id="@+id/button"
@@ -56,9 +54,7 @@
         android:text="@string/txt14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
 </LinearLayout>
-
 
     <TextView
         android:id="@+id/txt6"
@@ -72,11 +68,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+<LinearLayout
+android:layout_width="fill_parent"
+android:layout_height="wrap_content">
     <TextView
         android:id="@+id/txt9"
         android:text="歩数"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:id="@+id/txt10"
+        android:text="Kcal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
+</LinearLayout>
+
+<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/txt11"
+            android:text="転倒場所"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:id="@+id/txt12"
+            android:text="緯度、経度"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+</LinearLayout>
 
 </LinearLayout>
