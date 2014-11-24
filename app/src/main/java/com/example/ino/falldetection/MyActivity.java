@@ -2,10 +2,12 @@ package com.example.ino.falldetection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +25,7 @@ import java.util.List;
 
 public class MyActivity extends Activity implements SensorEventListener {
     private SensorManager managerACC, managerPRE, managerORI,managerSTE;
-    private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9,text10;
+    private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9,text10,text11,text12;
     private Button btn;
     private boolean doesRun,jud1,jud2,jud3;
     double cmp, v, q;
@@ -52,7 +54,11 @@ public class MyActivity extends Activity implements SensorEventListener {
         text8 = (TextView)this.findViewById(R.id.txt8);
         text9 = (TextView)this.findViewById(R.id.txt9);
         text10 = (TextView)this.findViewById(R.id.txt10);
+        text11 = (TextView)this.findViewById(R.id.txt11);
+        text12 = (TextView)this.findViewById(R.id.txt12);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
+//        LocationManager Location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//        Location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
     }
 
 
@@ -203,6 +209,8 @@ public class MyActivity extends Activity implements SensorEventListener {
             jud1 = false;
             jud2 = false;
             jud3 = false;
+
+
         }else{
             text7.setText("No転倒");
         }
