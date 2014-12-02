@@ -102,4 +102,11 @@ android:layout_height="wrap_content">
             />
 </LinearLayout>
 
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:id="@+id/fragment"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

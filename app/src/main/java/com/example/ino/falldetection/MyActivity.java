@@ -7,15 +7,27 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,12 +35,15 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class MyActivity extends Activity implements SensorEventListener {
+public class MyActivity extends Activity implements SensorEventListener,LocationListener {
     private SensorManager managerACC, managerPRE, managerORI,managerSTE;
     private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9,text10,text11,text12;
     private Button btn;
     private boolean doesRun,jud1,jud2,jud3;
+    private LocationManager location;
     double cmp, v, q;
+    double ido = 0.0;
+    double kdo = 0.0;
     String result,str, vv;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
@@ -36,7 +51,7 @@ public class MyActivity extends Activity implements SensorEventListener {
     MediaPlayer mp;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         doesRun = false;
@@ -57,9 +72,9 @@ public class MyActivity extends Activity implements SensorEventListener {
         text11 = (TextView)this.findViewById(R.id.txt11);
         text12 = (TextView)this.findViewById(R.id.txt12);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
-//        LocationManager Location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//        Location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
-    }
+        location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+        }
 
 
     @Override
@@ -160,7 +175,7 @@ public class MyActivity extends Activity implements SensorEventListener {
             BigDecimal eA = new BigDecimal(ave1);
             double A = eA.setScale(3,BigDecimal.ROUND_DOWN).doubleValue();
             text8.setText(""+A);
-//            Log.v("A", "" + A);
+          // Log.v("A", "" + A);
             phabox2.add(A);
             double p0 = phabox2.get(0);
             if (A - p0 >0.05){
@@ -200,8 +215,10 @@ public class MyActivity extends Activity implements SensorEventListener {
         kkk = ek.setScale(4,BigDecimal.ROUND_DOWN).doubleValue();
         text10.setText(String.valueOf(kkk)+" kcal");
     }
+
         if (jud1 == true && jud2 == true && jud3 ==true){
             text7.setText("転倒しました");
+            text12.setText("" + ido + " , " + kdo );
             mp.start();
             AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
             builder1.setMessage("転倒しました");
@@ -209,10 +226,10 @@ public class MyActivity extends Activity implements SensorEventListener {
             jud1 = false;
             jud2 = false;
             jud3 = false;
-
-
-        }else{
+        }
+        else{
             text7.setText("No転倒");
+            text12.setText("" + ido + " , " + kdo );
         }
     }
 
@@ -220,4 +237,38 @@ public class MyActivity extends Activity implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        ido = location.getLatitude();
+        kdo = location.getLongitude();
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+        switch (i){
+            case LocationProvider.AVAILABLE:
+                Log.v("Status", "AVAILABLE");
+                break;
+            case LocationProvider.OUT_OF_SERVICE:
+                Log.v("Status","OUT_OF_SERVICE");
+                break;
+            case  LocationProvider.TEMPORARILY_UNAVAILABLE:
+                Log.v("Status","TEMPORARILY_UNAVAILABLE");
+                break;
+        }
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+
 }

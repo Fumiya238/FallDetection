@@ -11,5 +11,7 @@
     <string name="txt14">気圧値 </string>
     <string name="txt9">歩数</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key">AIzaSyBXAqdJhQEUuoLPpLetRsb-RMfSLZ3bl2Q</string>
 
 </resources>
