@@ -3,6 +3,7 @@ package com.example.ino.falldetection;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -25,9 +26,12 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,12 +39,15 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class MyActivity extends Activity implements SensorEventListener,LocationListener {
+public class MyActivity extends FragmentActivity implements SensorEventListener,LocationListener {
     private SensorManager managerACC, managerPRE, managerORI,managerSTE;
     private TextView text1, text2,text3,text4,text5,text6,text7,text8,text9,text10,text11,text12;
     private Button btn;
-    private boolean doesRun,jud1,jud2,jud3;
+    private boolean Run1,Run2,jud1,jud2,jud3;
     private LocationManager location;
+    private GoogleMap mMap;
+    private LatLng fall,lab;
+    private PolylineOptions line;
     double cmp, v, q;
     double ido = 0.0;
     double kdo = 0.0;
@@ -48,13 +55,16 @@ public class MyActivity extends Activity implements SensorEventListener,Location
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
     ArrayList<Double> phabox2 = new ArrayList<Double>();
+    ArrayList<Double> idobox = new ArrayList<Double>();
+    ArrayList<Double> kdobox = new ArrayList<Double>();
     MediaPlayer mp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        doesRun = false;
+        Run1 = false;
+        Run2 = false;
         jud1 = false;
         jud2 = false;
         jud3 = false;
@@ -73,8 +83,15 @@ public class MyActivity extends Activity implements SensorEventListener,Location
         text12 = (TextView)this.findViewById(R.id.txt12);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
         location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+        location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,5,this);
+        lab = new LatLng(35.561888, 139.575263);
+        fall = new LatLng(50.844993, 4.349978);
+        mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+        if (mMap != null){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lab, 16));
         }
+
+   }
 
 
     @Override
@@ -97,8 +114,8 @@ public class MyActivity extends Activity implements SensorEventListener,Location
     }
 
     public void doAction(View view){
-        if(!doesRun){
-            doesRun = true;
+        if(!Run1){
+            Run1 = true;
             btn.setText("OFF");
             managerACC = (SensorManager)this.getSystemService(SENSOR_SERVICE);
             List<Sensor> sensorsacc = managerACC.getSensorList(Sensor.TYPE_ACCELEROMETER);
@@ -125,7 +142,7 @@ public class MyActivity extends Activity implements SensorEventListener,Location
                 managerSTE.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             }
         }else{
-            doesRun = false;
+            Run1 = false;
             btn.setText("ON");
             managerACC.unregisterListener(this);
             managerPRE.unregisterListener(this);
@@ -165,7 +182,7 @@ public class MyActivity extends Activity implements SensorEventListener,Location
         phabox.add(q);
         if (phabox.size() == 100){
             int i;
-            double ave1,ave2, ppp1=0, ppp2=0;
+            double ave1, ppp1=0;
             Iterator<Double> iter = phabox.iterator();
                 for (i=0;i<100;i++){
                     ppp1 = ppp1 + phabox.get(i);
@@ -216,20 +233,45 @@ public class MyActivity extends Activity implements SensorEventListener,Location
         text10.setText(String.valueOf(kkk)+" kcal");
     }
 
-        if (jud1 == true && jud2 == true && jud3 ==true){
-            text7.setText("転倒しました");
-            text12.setText("" + ido + " , " + kdo );
-            mp.start();
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-            builder1.setMessage("転倒しました");
-            builder1.show();
-            jud1 = false;
-            jud2 = false;
-            jud3 = false;
+        if (jud1 == true && jud2 == true && jud3 == true){
+              FallAction();
         }
         else{
             text7.setText("No転倒");
             text12.setText("" + ido + " , " + kdo );
+        }
+    }
+
+    public void FallAction(){
+        text7.setText("転倒しました");
+        mp.start();
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("転倒しましたか？");
+        builder1.show();
+        mMap.addMarker(new MarkerOptions().position(fall).title("転倒発生！"));
+        jud1 = false;
+        jud2 = false;
+        jud3 = false;
+    }
+
+    public void doFall(View view){
+            jud1 = true;
+            jud2 = true;
+            jud3 = true;
+      }
+
+    public void doView(View view){
+        if(!Run2) {
+            Run2 = true;
+//            line = new PolylineOptions();
+//            line.add(fall, lab);
+//            line.color(Color.argb(31, 0, 255, 255));
+//            line.width(3);
+//            mMap.addPolyline(line);
+            onDraw();
+        }else {
+            mMap.clear();
+            Run2 = false;
         }
     }
 
@@ -240,9 +282,32 @@ public class MyActivity extends Activity implements SensorEventListener,Location
 
     @Override
     public void onLocationChanged(android.location.Location location) {
+        CameraPosition cameraPos = new CameraPosition.Builder()
+                .target(new LatLng(location.getLatitude(),location.getLongitude())).zoom(16)
+                .bearing(0).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
         ido = location.getLatitude();
         kdo = location.getLongitude();
+        fall = new LatLng(ido,kdo);
+        mMap.addMarker(new MarkerOptions().position(fall).title(""));
+        idobox.add(ido);
+        kdobox.add(kdo);
     }
+
+
+    public void onDraw(){
+        int i;
+        for (i=0;i<idobox.size() -1 ; i++){
+            line = new PolylineOptions();
+            line.add(new LatLng(idobox.get(i),kdobox.get(i)));
+            line.add(new LatLng(idobox.get(i+1),kdobox.get(i+1)));
+            line.color(Color.argb(31, 0, 255, 255));
+            line.width(3);
+            mMap.addPolyline(line);
+        }
+    }
+
+
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -269,6 +334,9 @@ public class MyActivity extends Activity implements SensorEventListener,Location
     public void onProviderDisabled(String s) {
 
     }
+
+
+
 
 
 }

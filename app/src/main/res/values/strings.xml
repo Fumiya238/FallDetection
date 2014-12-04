@@ -3,6 +3,8 @@
 
     <string name="app_name">FallDetection</string>
     <string name="on">ON</string>
+    <string name="view">View</string>
+    <string name="fall">Fall</string>
     <string name="txt1">合成値 :</string>
     <string name="txt2">気圧値 :</string>
     <string name="txt3">傾斜角 :\n回転角 :</string>
