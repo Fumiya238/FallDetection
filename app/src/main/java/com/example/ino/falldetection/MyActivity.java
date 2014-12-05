@@ -13,6 +13,9 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +40,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MyActivity extends FragmentActivity implements SensorEventListener,LocationListener {
@@ -48,6 +53,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     private GoogleMap mMap;
     private LatLng fall,lab;
     private PolylineOptions line;
+    private Vibrator vibrator;
     double cmp, v, q;
     double ido = 0.0;
     double kdo = 0.0;
@@ -82,10 +88,11 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         text11 = (TextView)this.findViewById(R.id.txt11);
         text12 = (TextView)this.findViewById(R.id.txt12);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
+        vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
         location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,5,this);
+        location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
         lab = new LatLng(35.561888, 139.575263);
-        fall = new LatLng(50.844993, 4.349978);
+        fall = new LatLng(35.561888, 139.575263);
         mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         if (mMap != null){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lab, 16));
@@ -233,8 +240,16 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         text10.setText(String.valueOf(kkk)+" kcal");
     }
 
-        if (jud1 == true && jud2 == true && jud3 == true){
-              FallAction();
+        if (jud1 == true ){
+              if (jud2 ==true){
+                  if (jud3 == true){
+                      FallAction();
+                  }else{
+                      jud2 = false;
+                  }
+              }else{
+                  jud1 = false;
+              }
         }
         else{
             text7.setText("No転倒");
@@ -244,10 +259,11 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
 
     public void FallAction(){
         text7.setText("転倒しました");
-        mp.start();
+      //  mp.start();
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage("転倒しましたか？");
+        builder1.setMessage("転倒しましたか？" );
         builder1.show();
+     //   vibrator.vibrate(4000);
         mMap.addMarker(new MarkerOptions().position(fall).title("転倒発生！"));
         jud1 = false;
         jud2 = false;
@@ -263,11 +279,6 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     public void doView(View view){
         if(!Run2) {
             Run2 = true;
-//            line = new PolylineOptions();
-//            line.add(fall, lab);
-//            line.color(Color.argb(31, 0, 255, 255));
-//            line.width(3);
-//            mMap.addPolyline(line);
             onDraw();
         }else {
             mMap.clear();
@@ -289,9 +300,9 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         ido = location.getLatitude();
         kdo = location.getLongitude();
         fall = new LatLng(ido,kdo);
-        mMap.addMarker(new MarkerOptions().position(fall).title(""));
         idobox.add(ido);
         kdobox.add(kdo);
+
     }
 
 
@@ -302,7 +313,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             line.add(new LatLng(idobox.get(i),kdobox.get(i)));
             line.add(new LatLng(idobox.get(i+1),kdobox.get(i+1)));
             line.color(Color.argb(31, 0, 255, 255));
-            line.width(3);
+            line.width(10);
             mMap.addPolyline(line);
         }
     }
@@ -334,8 +345,6 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     public void onProviderDisabled(String s) {
 
     }
-
-
 
 
 
