@@ -199,9 +199,10 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             BigDecimal eA = new BigDecimal(ave1);
             double A = eA.setScale(3,BigDecimal.ROUND_DOWN).doubleValue();
             text8.setText(""+A);
-          // Log.v("A", "" + A);
+            Log.v("A",""+A);
             phabox2.add(A);
             double p0 = phabox2.get(0);
+            Log.v("A",""+A);
             if (A - p0 >0.05){
                 text5.setText("落下");
                 jud2 = true;
@@ -211,8 +212,8 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
                 jud2 = false;
                 phabox2.clear();
             }else if (phabox2.size() == 15) {
-                text5.setText("落ちてない");
-                jud3 = false;
+                text5.setText("判定");
+                jud2 = false;
             }
             for (i=0;i<1; i++){
                 iter.next();
@@ -240,15 +241,18 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         text10.setText(String.valueOf(kkk)+" kcal");
     }
 
-        if (jud1 == true ){
-              if (jud2 ==true){
-                  if (jud3 == true){
+        if (jud3 == true ){
+            //  Log.v("Jud","1");
+              if (jud2 == true){
+              //    Log.v("Jud","2");
+                  if (jud1 == true){
+               //       Log.v("Jud","3");
                       FallAction();
                   }else{
                       jud2 = false;
                   }
               }else{
-                  jud1 = false;
+                  jud3 = false;
               }
         }
         else{
@@ -258,16 +262,17 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     }
 
     public void FallAction(){
+        Log.v("Jud","○");
         text7.setText("転倒しました");
       //  mp.start();
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("転倒しましたか？" );
         builder1.show();
-     //   vibrator.vibrate(4000);
         mMap.addMarker(new MarkerOptions().position(fall).title("転倒発生！"));
         jud1 = false;
         jud2 = false;
         jud3 = false;
+        vibrator.vibrate(4000);
     }
 
     public void doFall(View view){
