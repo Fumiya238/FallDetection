@@ -15,6 +15,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -36,12 +37,30 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 
 public class MyActivity extends FragmentActivity implements SensorEventListener,LocationListener {
@@ -57,7 +76,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     double cmp, v, q;
     double ido = 0.0;
     double kdo = 0.0;
-    String result,str, vv;
+    String result,str, vv,postido,postkdo;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
     ArrayList<Double> phabox2 = new ArrayList<Double>();
@@ -96,6 +115,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         if (mMap != null){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lab, 16));
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
         }
 
    }
@@ -197,7 +217,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             ave1 = ppp1/100;
 
             BigDecimal eA = new BigDecimal(ave1);
-            double A = eA.setScale(3,BigDecimal.ROUND_DOWN).doubleValue();
+            double A = eA.setScale(4,BigDecimal.ROUND_DOWN).doubleValue();
             text8.setText(""+A);
             Log.v("A",""+A);
             phabox2.add(A);
@@ -205,6 +225,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             Log.v("A",""+A);
             if (A - p0 >0.05){
                 text5.setText("落下");
+                Log.v("D","○");
                 jud2 = true;
                 phabox2.clear();
             }if (p0 - A > 0.05){
@@ -241,18 +262,20 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         text10.setText(String.valueOf(kkk)+" kcal");
     }
 
-        if (jud3 == true ){
+        if (jud1 == true ){
             //  Log.v("Jud","1");
               if (jud2 == true){
               //    Log.v("Jud","2");
-                  if (jud1 == true){
+                  if (jud3 == true){
                //       Log.v("Jud","3");
                       FallAction();
+//                      doSend();
+                      doPost();
                   }else{
                       jud2 = false;
                   }
               }else{
-                  jud3 = false;
+                  jud1 = false;
               }
         }
         else{
@@ -264,7 +287,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     public void FallAction(){
         Log.v("Jud","○");
         text7.setText("転倒しました");
-      //  mp.start();
+        mp.start();
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("転倒しましたか？" );
         builder1.show();
@@ -272,7 +295,8 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         jud1 = false;
         jud2 = false;
         jud3 = false;
-        vibrator.vibrate(4000);
+        vibrator.vibrate(3000);
+//        doSend();
     }
 
     public void doFall(View view){
@@ -307,7 +331,9 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         fall = new LatLng(ido,kdo);
         idobox.add(ido);
         kdobox.add(kdo);
-
+        postido = String.valueOf(ido);
+        postkdo = String.valueOf(kdo);
+        doPost();
     }
 
 
@@ -317,12 +343,72 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             line = new PolylineOptions();
             line.add(new LatLng(idobox.get(i),kdobox.get(i)));
             line.add(new LatLng(idobox.get(i+1),kdobox.get(i+1)));
-            line.color(Color.argb(31, 0, 255, 255));
+            line.color(Color.argb(50, 0, 255, 255));
             line.width(10);
             mMap.addPolyline(line);
         }
     }
 
+
+    public void doSend(){
+        final String mUser = "FallDetection123@gmail.com";
+        final String sUser = "g1383103@tcu.ac.jp";
+        final String mPassword = "ar232323";
+
+        try {
+            Properties property = new Properties();
+            property.put("mail.smtp.host","smtp.gmail.com");
+            property.put("mail.smtp.auth", "true");
+            property.put("mail.smtp.starttls.enable", "true");
+            property.put("mail.smtp.host", "smtp.gmail.com");
+            property.put("mail.smtp.port", "587");
+            property.put("mail.smtp.debug", "true");
+            Session session = Session.getInstance(property, new javax.mail.Authenticator(){
+                protected PasswordAuthentication getPasswordAuthentication(){
+                    return new PasswordAuthentication("FallDetection123@gmail.com", "ar232323");
+                }
+            });
+            Session sess = Session.getDefaultInstance(property);
+            MimeMessage msg = new MimeMessage(sess);
+            msg.setFrom(new InternetAddress(mUser));
+            msg.setRecipient(Message.RecipientType.TO,new InternetAddress(sUser));
+            msg.setContent("body","text/plain;utf-8");
+            msg.setHeader("Content-Transfer-Encording","7bit");
+            msg.setSubject("転倒発生！");
+            msg.setText("転倒した恐れがあります！\n https://www.google.co.jp/maps?q=loc:"+ido+","+kdo+"\n上記の場所で転倒が検知されました！","utf-8");
+
+            Transport transport = sess.getTransport("smtp");
+            transport.connect(mUser,mPassword);
+            transport.sendMessage(msg,msg.getAllRecipients());
+            transport.close();
+    }catch (Exception e){
+        e.printStackTrace();}
+    }
+
+    public void doPost(){
+
+        //-----[クライアント設定]
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://133.78.124.26/ino/koushin2.php");
+
+        //-----[POST送信するデータを格納]
+        List<NameValuePair> Value = new ArrayList<NameValuePair>();
+        Value.add(new BasicNameValuePair("ido",postido));
+        Value.add(new BasicNameValuePair("kdo",postkdo));
+        try {
+            //-----[POST送信]
+            httppost.setEntity(new UrlEncodedFormEntity(Value));
+            HttpResponse response = httpclient.execute(httppost);
+
+            //-----[サーバーからの応答を取得]
+            if (response.getStatusLine().getStatusCode() ==
+                    HttpStatus.SC_OK) {
+                Log.v("","ok");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
