@@ -2,7 +2,9 @@ package com.example.ino.falldetection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -73,6 +75,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     private LatLng fall,lab;
     private PolylineOptions line;
     private Vibrator vibrator;
+    private AlertDialog.Builder builder1;
     double cmp, v, q;
     double ido = 0.0;
     double kdo = 0.0;
@@ -83,6 +86,8 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     ArrayList<Double> idobox = new ArrayList<Double>();
     ArrayList<Double> kdobox = new ArrayList<Double>();
     MediaPlayer mp;
+    Timer timer = null;
+    Handler handle = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -219,7 +224,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
             BigDecimal eA = new BigDecimal(ave1);
             double A = eA.setScale(4,BigDecimal.ROUND_DOWN).doubleValue();
             text8.setText(""+A);
-            Log.v("A",""+A);
+         //   Log.v("A",""+A);
             phabox2.add(A);
             double p0 = phabox2.get(0);
             Log.v("A",""+A);
@@ -285,18 +290,58 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     }
 
     public void FallAction(){
-        Log.v("Jud","○");
+    //    Log.v("Jud","○");
         text7.setText("転倒しました");
         mp.start();
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage("転倒しましたか？" );
+        builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("転倒を検知しました！");
+        builder1.setPositiveButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                timer.cancel();
+                timer = null;
+                vibrator.cancel();
+
+            }
+        });
         builder1.show();
-        mMap.addMarker(new MarkerOptions().position(fall).title("転倒発生！"));
+
+        mMap.addMarker(new MarkerOptions().position(fall).title("転倒位置"));
         jud1 = false;
         jud2 = false;
         jud3 = false;
-        vibrator.vibrate(3000);
+        vibrator.vibrate(15000);
+        Time();
 //        doSend();
+    }
+
+    public void Time(){
+        if(timer == null){
+            timer = new Timer();
+            timer.schedule(new MyTimer(),15000);
+        }
+    }
+
+    class MyTimer extends TimerTask {
+        public void run() {
+            handle.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    Dialog();
+                }
+            });
+        }
+    }
+
+    public void Dialog(){
+
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+        builder2.setMessage("○○さんに連絡します");
+        builder2.show();
+        doSend();
+//        timer.cancel();
+//        timer = null;
     }
 
     public void doFall(View view){
