@@ -318,7 +318,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     public void Time(){
         if(timer == null){
             timer = new Timer();
-            timer.schedule(new MyTimer(),15000);
+            timer.schedule(new MyTimer(),10000);
         }
     }
 
@@ -337,7 +337,7 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     public void Dialog(){
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-        builder2.setMessage("○○さんに連絡します");
+        builder2.setMessage("○○さんに連絡しました。");
         builder2.show();
         doSend();
 //        timer.cancel();
