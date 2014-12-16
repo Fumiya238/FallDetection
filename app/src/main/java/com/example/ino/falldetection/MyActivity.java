@@ -3,6 +3,9 @@ package com.example.ino.falldetection;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -79,6 +82,8 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
     double cmp, v, q;
     double ido = 0.0;
     double kdo = 0.0;
+
+
     String result,str, vv,postido,postkdo;
     ArrayList<Double> cmpbox = new ArrayList<Double>();
     ArrayList<Double> phabox = new ArrayList<Double>();
@@ -113,6 +118,9 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         text12 = (TextView)this.findViewById(R.id.txt12);
         mp = MediaPlayer.create(getBaseContext(),R.raw.mdai);
         vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+//        final BluetoothManager bluetoothManager =(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
+//        BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
+//        mBluetoothAdapter.startLeScan(mLeScanCallback);
         location =(LocationManager)getSystemService(Context.LOCATION_SERVICE);
         location.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
         lab = new LatLng(35.561888, 139.575263);
@@ -144,6 +152,13 @@ public class MyActivity extends FragmentActivity implements SensorEventListener,
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback(){
+//        @Override
+//        public void onLeScan(BluetoothDevice device,int rssi,byte[] scanRecord){
+//
+//        }
+//    };
 
     public void doAction(View view){
         if(!Run1){
